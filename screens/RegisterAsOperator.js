@@ -5,33 +5,30 @@ import { Ionicons } from '@expo/vector-icons';
 import Logo from '../assets/DIVINA logo.svg';
 
 export default function Register() {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [certificate, setCertificate] = useState('');
+  const [bir, setBir] = useState('');
+
+  function handleUploadCert() {
+    // TODO: Handle login logic here
+  }
+
+  function handleUploadBIR() {
+    // TODO: Handle signup logic here
+  }
 
   function handleNext() {
     // TODO: Handle next logic here
   }
 
-  function handleRegisterAsOp() {
-    // TODO: Handle signup logic here
-  }
-
   function back() {
-    //TODO: Handle back logic here
+    // TODO: Handle back logic here
   }
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={styles.card}>
         <TouchableOpacity style={{ position: 'absolute', left: 20, top: 20 }} onPress={back}>
-          <Ionicons 
-            name={'arrow-back'} 
-            size={24} 
-            color="#636D7D" 
-            style={{ 
-              position: 'absolute', 
-              left: 20, 
-              top: 20 }} />
+          <Ionicons name={'arrow-back'} size={24} color="#636D7D" />
         </TouchableOpacity>
 
         <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16, marginBottom: -11, marginStart: 0 }}>Welcome to</Text>
@@ -40,40 +37,24 @@ export default function Register() {
         {/* <Text style={{ fontSize: 16, color: '#666' }}>Your diving companion app.</Text> */}
 
         <View style={{ marginTop: 20 }}>
-          <Text style={styles.label}>First name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your first name"
-            value={firstName}
-            onChangeText={setFirstName}
-          />
+          <Text style={styles.label}>Certificate</Text>
+          <TouchableOpacity style={{...styles.uploadButton, flexDirection: 'row'}} onPress={handleUploadCert}>
+            <Text style={{ ...styles.touchableLabel, color: '#636D7D', fontSize: 16 }}>Upload</Text>
+            <Ionicons name={'cloud-upload'} size={20} color="#636D7D" style={{ marginLeft: 8 }} />
+          </TouchableOpacity>
         </View>
 
-        <View style={{ marginTop: 16 }}>
-          <Text style={styles.label}>Last name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your last name"
-            value={lastName}
-            onChangeText={setLastName}
-          />
+        <View style={{ marginTop: 16, }}>
+          <Text style={styles.label}>BIR</Text>
+          <TouchableOpacity style={{...styles.uploadButton, flexDirection: 'row'}} onPress={handleUploadBIR}>
+            <Text style={{ ...styles.touchableLabel, color: '#636D7D', fontSize: 16 }}>Upload</Text>
+            <Ionicons name={'cloud-upload'} size={20} color="#636D7D" style={{ marginLeft: 8 }} />
+          </TouchableOpacity>
         </View>
 
         <TouchableOpacity style={{...styles.button, marginTop: 46}} 
           onPress={handleNext}>
           <Text style={{ ...styles.touchableLabel, color: '#fff' }}>Next</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={{
-            ...styles.button, 
-            marginTop: 12,
-            backgroundColor: 'white',
-            borderColor: '#CFCFCF',
-            borderWidth: 1,
-          }} 
-          onPress={handleRegisterAsOp}>
-          <Text style={{ ...styles.touchableLabel, color: '#636D7D', fontSize: 16 }}>Register as diving operator</Text>
         </TouchableOpacity>
           
       </View>
@@ -122,5 +103,14 @@ const styles = StyleSheet.create({
     width: 300,
     height: 52,
     borderRadius: 26,
+  },
+  uploadButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F4F6FA',
+    paddingVertical: 12,
+    width: 300,
+    height: 52,
+    borderRadius: 16,
   }
 });

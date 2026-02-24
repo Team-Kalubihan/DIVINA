@@ -5,33 +5,26 @@ import { Ionicons } from '@expo/vector-icons';
 import Logo from '../assets/DIVINA logo.svg';
 
 export default function Register() {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const [showPassword1, setShowPassword1] = useState(true);
+  const [showPassword2, setShowPassword2] = useState(true);
 
   function handleNext() {
     // TODO: Handle next logic here
   }
 
-  function handleRegisterAsOp() {
-    // TODO: Handle signup logic here
-  }
-
-  function back() {
-    //TODO: Handle back logic here
+  function handleBack() {
+      // TODO: Handle back logic here
   }
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={styles.card}>
-        <TouchableOpacity style={{ position: 'absolute', left: 20, top: 20 }} onPress={back}>
-          <Ionicons 
-            name={'arrow-back'} 
-            size={24} 
-            color="#636D7D" 
-            style={{ 
-              position: 'absolute', 
-              left: 20, 
-              top: 20 }} />
+        <TouchableOpacity style={{ position: 'absolute', left: 20, top: 20 }} onPress={handleBack}>
+          <Ionicons name={'arrow-back'} size={24} color="#636D7D" />
         </TouchableOpacity>
 
         <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16, marginBottom: -11, marginStart: 0 }}>Welcome to</Text>
@@ -40,40 +33,58 @@ export default function Register() {
         {/* <Text style={{ fontSize: 16, color: '#666' }}>Your diving companion app.</Text> */}
 
         <View style={{ marginTop: 20 }}>
-          <Text style={styles.label}>First name</Text>
+          <Text style={styles.label}>Email</Text>
           <TextInput
             style={styles.input}
-            placeholder="Enter your first name"
-            value={firstName}
-            onChangeText={setFirstName}
+            placeholder="Enter your email"
+            value={username}
+            onChangeText={setUsername}
           />
         </View>
 
         <View style={{ marginTop: 16 }}>
-          <Text style={styles.label}>Last name</Text>
+          <Text style={styles.label}>Password</Text>
+
           <TextInput
             style={styles.input}
-            placeholder="Enter your last name"
-            value={lastName}
-            onChangeText={setLastName}
+            placeholder="Enter your password"
+            secureTextEntry={showPassword1}
+            value={password}
+            onChangeText={setPassword}
           />
+
+          <TouchableOpacity style={{ position: 'absolute', right: 20, top: 38 }}
+            onPress={() => setShowPassword1(!showPassword1)}>
+            <Ionicons 
+              name={showPassword1 ? 'eye-off' : 'eye'} 
+              size={20} 
+              color="gray" />
+          </TouchableOpacity>
+        </View>
+
+        <View style={{ marginTop: 16 }}>
+          <Text style={styles.label}>Confirm Password</Text>
+
+          <TextInput
+            style={styles.input}
+            placeholder="Confirm your password"
+            secureTextEntry={showPassword2}
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+          />
+
+          <TouchableOpacity style={{ position: 'absolute', right: 20, top: 38 }}
+            onPress={() => setShowPassword2(!showPassword2)}>
+            <Ionicons 
+              name={showPassword2 ? 'eye-off' : 'eye'} 
+              size={20} 
+              color="gray" />
+          </TouchableOpacity>
         </View>
 
         <TouchableOpacity style={{...styles.button, marginTop: 46}} 
           onPress={handleNext}>
           <Text style={{ ...styles.touchableLabel, color: '#fff' }}>Next</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={{
-            ...styles.button, 
-            marginTop: 12,
-            backgroundColor: 'white',
-            borderColor: '#CFCFCF',
-            borderWidth: 1,
-          }} 
-          onPress={handleRegisterAsOp}>
-          <Text style={{ ...styles.touchableLabel, color: '#636D7D', fontSize: 16 }}>Register as diving operator</Text>
         </TouchableOpacity>
           
       </View>
