@@ -4,11 +4,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import HomeScreen from '../screens/Login';
-import DiveSitesScreen from '../screens/DiveSites';
-import DivePlanScreen from '../screens/DivePlan';
-import IdentifierScreen from '../screens/Identifier';
-import ProfileScreen from '../screens/Profile';
-import OperatorScreen from '../screens/OperatorProfile';
+import DiveSitesScreen from '../screens/main/DiveSites';
+import DivePlanScreen from '../screens/main/DivePlan';
+import IdentifierScreen from '../screens/main/Identifier';
+import ProfileScreen from '../screens/main/Profile';
+import OperatorScreen from '../screens/main/OperatorProfile';
 
 
 const Tab = createBottomTabNavigator();
