@@ -1,37 +1,32 @@
-import { View, Image, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView } from 'react-native';
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 
-import Logo from '../assets/DIVINA logo.svg';
+import Logo from '../../assets/DIVINA logo.svg';
 
-export default function Register() {
+export default function Register({ navigation }) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
 
   function handleNext() {
-    // TODO: Handle next logic here
+    // TODO: Handle next logic
+    navigation.navigate('RegisterCredScreen');
   }
 
   function handleRegisterAsOp() {
-    // TODO: Handle signup logic here
+    // TODO: Handle register as op logic
+    navigation.navigate('RegisterAsOperatorScreen');
   }
 
   function back() {
-    //TODO: Handle back logic here
+    navigation.goBack();
   }
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={styles.card}>
         <TouchableOpacity style={{ position: 'absolute', left: 20, top: 20 }} onPress={back}>
-          <Ionicons 
-            name={'arrow-back'} 
-            size={24} 
-            color="#636D7D" 
-            style={{ 
-              position: 'absolute', 
-              left: 20, 
-              top: 20 }} />
+          <Ionicons name={'arrow-back'} size={24} color="#636D7D" />
         </TouchableOpacity>
 
         <Text style={{ fontFamily: 'Poppins-Regular', fontSize: 16, marginBottom: -11, marginStart: 0 }}>Welcome to</Text>

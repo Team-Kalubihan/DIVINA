@@ -1,10 +1,10 @@
-import { View, Image, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, KeyboardAvoidingView } from 'react-native';
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 
-import Logo from '../assets/DIVINA logo.svg';
+import Logo from '../../assets/DIVINA logo.svg';
 
-export default function Register() {
+export default function Register({ navigation }) {
   const [certificate, setCertificate] = useState('');
   const [bir, setBir] = useState('');
 
@@ -18,10 +18,11 @@ export default function Register() {
 
   function handleNext() {
     // TODO: Handle next logic here
+    navigation.navigate('RegisterCredScreen');
   }
 
   function back() {
-    // TODO: Handle back logic here
+    navigation.goBack();
   }
 
   return (

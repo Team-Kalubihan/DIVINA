@@ -1,10 +1,10 @@
-import { View, Image, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView } from 'react-native';
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 
-import Logo from '../assets/DIVINA logo.svg';
+import Logo from '../../assets/DIVINA logo.svg';
 
-export default function Register() {
+export default function Register({ navigation }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -13,11 +13,15 @@ export default function Register() {
   const [showPassword2, setShowPassword2] = useState(true);
 
   function handleNext() {
-    // TODO: Handle next logic here
+    //TODO: Handle next logic here
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'LoginScreen' }],
+    });
   }
 
   function handleBack() {
-      // TODO: Handle back logic here
+    navigation.goBack();
   }
 
   return (

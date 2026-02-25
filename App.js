@@ -1,16 +1,23 @@
-import { StatusBar, } from 'expo-status-bar';
-import { StyleSheet, Text, View, } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import 'react-native-gesture-handler';
 
-import LoginScreen from './screens/Login';
-import RegisterScreen from './screens/RegisterCred';
+import { StyleSheet, } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+
+import { NavigationContainer } from '@react-navigation/native';
+import { AuthProvider } from './src/context/AuthContext';
+import RootStack from './src/navigation/RootStack';
 
 export default function App() {
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
-      <RegisterScreen />
-    </SafeAreaView>
+    // <SafeAreaView style={styles.container}>
+    //   <StatusBar style="light" />
+    //   <HomeScreen />
+    // </SafeAreaView>
+    <AuthProvider>
+      <NavigationContainer>
+        <RootStack />
+      </NavigationContainer>
+    </AuthProvider>
   );
 }
 
