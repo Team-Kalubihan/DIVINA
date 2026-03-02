@@ -16,6 +16,11 @@ import Logo from '../../assets/DIVINA logo.svg';
 
 const { width } = Dimensions.get('window');
 
+// ─── Click Handlers ─────────────────────────────────────────────────────
+const handleCardPress = () => {
+  alert('Card pressed');
+}
+
 // ─── MarineConditionCard ─────────────────────────────────────────────────────
 const MarineConditionCard = ({ icon, label, value, highlighted }) => (
   <View style={[styles.conditionCard, highlighted && styles.conditionCardHighlighted]}>
@@ -36,7 +41,7 @@ const MarineConditionCard = ({ icon, label, value, highlighted }) => (
 // ─── MarineConditionsSection ─────────────────────────────────────────────────
 const MarineConditionsSection = () => (
   <View style={styles.marineSection}>
-    <Logo width={190} height={50} />
+    <Logo width={150} height={30} />
     <Text style={styles.marineSectionTitle}>Current Marine Conditions:</Text>
     <View style={styles.conditionsGrid}>
       <MarineConditionCard icon="eye"         label="Visibility"     value="10m – 20m" highlighted />
@@ -60,7 +65,7 @@ const BookedAreaBanner = ({ area }) => (
 
 // ─── SiteCard ────────────────────────────────────────────────────────────────
 const SiteCard = ({ name, imageUri }) => (
-  <TouchableOpacity style={styles.siteCard} activeOpacity={0.85}>
+  <TouchableOpacity style={styles.siteCard} activeOpacity={0.85} onPress={handleCardPress}>
     <ImageBackground
       source={{ uri: imageUri }}
       style={styles.siteImage}
@@ -96,7 +101,7 @@ const POPULAR_SITES = [
   },
   {
     name: 'Olanggo Island',
-    imageUri: 'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=600&q=80',
+    imageUri: 'https://i0.wp.com/theficklefeet.com/wp-content/uploads/2025/09/San-Vicente-Marine-Sanctuary-Olango-Island-1-Large.jpeg?w=1280&ssl=1',
   },
 ];
 
@@ -111,13 +116,12 @@ const HIDDEN_SITES = [
   },
   {
     name: 'Olanggo Island',
-    imageUri: 'https://images.unsplash.com/photo-1518791841217-8f162f1912da?w=600&q=80',
+    imageUri: 'https://i0.wp.com/theficklefeet.com/wp-content/uploads/2025/09/San-Vicente-Marine-Sanctuary-Olango-Island-1-Large.jpeg?w=1280&ssl=1',
   },
 ];
 
 // ─── HOME SCREEN ─────────────────────────────────────────────────────────────
 const HomeScreen = () => {
-  const [activeTab, setActiveTab] = useState('home');
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -169,7 +173,7 @@ const styles = StyleSheet.create({
   // ── Marine Card
   marineCard: {
     backgroundColor: '#fff',
-    borderRadius: 36,
+    borderRadius: 30,
     overflow: 'hidden',
     marginBottom: 24,
     shadowColor: '#2563EB',
@@ -179,7 +183,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   marineSection: {
-    borderRadius: 36,
+    borderRadius: 30,
     backgroundColor: '#fff',
     padding: 16,
     paddingBottom: 20,
@@ -187,6 +191,7 @@ const styles = StyleSheet.create({
   marineSectionTitle: {
     fontSize: 12,
     color: '#64748B',
+    marginTop: 12,
     marginBottom: 12,
     fontWeight: '500',
     letterSpacing: 0.3,
@@ -260,7 +265,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   siteSectionTitle: {
-    fontSize: 17,
+    fontSize: 20,
     fontWeight: '700',
     color: '#1E293B',
     marginBottom: 12,

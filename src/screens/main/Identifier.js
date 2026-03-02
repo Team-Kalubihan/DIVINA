@@ -43,7 +43,7 @@ const IdentifierButtons = ({ icon, label, }) => (
 // ─── UploadAndCameraSection ─────────────────────────────────────────────────
 const UploadAndCameraSection = () => (
   <View style={styles.marineSection}>
-    <Logo width={190} height={50} marginBottom={12}/>
+    <Logo width={150} height={30} marginBottom={12}/>
     <View style={styles.conditionsGrid}>
       <IdentifierButtons icon="cloud-upload" label="Upload"    value="28°C"      />
       <IdentifierButtons icon="camera"      label="Take a picture"  value="Safe"      />
@@ -52,7 +52,7 @@ const UploadAndCameraSection = () => (
       <Text style={styles.descriptionText}>
         Take a picture or upload one for an instant identification of the marine species.
       </Text>
-      <Text style={{...styles.descriptionText, fontStyle: 'italic', fontSize: 10, marginTop: 6}}>
+      <Text style={{...styles.descriptionText, fontStyle: 'italic', fontSize: 11, marginTop: 8}}>
         note: camera taken pictures will be the only ones legible for points.
       </Text>
     </View>
@@ -70,8 +70,8 @@ const IdentifiedCard = ({ name, scientificName, imageUri }) => (
       <View style={styles.identifiedImageOverlay} />
     </ImageBackground>
     <View style={styles.identifiedNameContainer}>
-      <Text style={{ fontSize: 14, fontWeight: '600', color: '#1E293B' }}>{name}</Text>
-      <Text style={{ fontSize: 12, fontStyle: 'italic', color: '#64748B' }}>{scientificName}</Text>
+      <Text style={{ fontSize: 16, fontWeight: '600', color: '#1E293B' }}>{name}</Text>
+      <Text style={{ fontSize: 14, fontStyle: 'italic', color: '#64748B' }}>{scientificName}</Text>
     </View>
   </TouchableOpacity>
 );
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   // ── Identifier Card
   marineCard: {
     backgroundColor: '#fff',
-    borderRadius: 36,
+    borderRadius: 30,
     overflow: 'hidden',
     marginBottom: 24,
     shadowColor: '#2563EB',
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   marineSection: {
-    borderRadius: 36,
+    borderRadius: 30,
     backgroundColor: '#fff',
     padding: 16,
     paddingBottom: 20,
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   descriptionText: {
-    fontSize: 11,
+    fontSize: 12,
     color: '#1E293B',
     textAlign: 'center',
   },
@@ -199,8 +199,9 @@ const styles = StyleSheet.create({
   // ── Recent Identifications
   identifiedSection: {
     backgroundColor: '#fff',
-    borderRadius: 36,
+    borderRadius: 30,
     padding: 16,
+    paddingBottom: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.10,
@@ -232,7 +233,6 @@ const styles = StyleSheet.create({
   },
   identifiedNameContainer: {
     flex: 1,
-    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'flex-start',
     paddingHorizontal: 14,
