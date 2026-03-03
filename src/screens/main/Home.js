@@ -14,6 +14,10 @@ import { Ionicons } from '@expo/vector-icons';
 
 import Logo from '../../assets/DIVINA logo.svg';
 
+import DiveSiteCard from '../../components/DiveSiteCard';
+import DiveSiteWeatherModal, { WEATHER_MOCK } from '../../components/DiveSiteWeatherModal';
+import DiveSiteModal, { DIVE_SITE_MODAL_MOCK } from '../../components/DiveSiteModal';
+
 const { width } = Dimensions.get('window');
 
 // ─── Click Handlers ─────────────────────────────────────────────────────
@@ -39,52 +43,46 @@ const MarineConditionCard = ({ icon, label, value, highlighted }) => (
 );
 
 // ─── MarineConditionsSection ─────────────────────────────────────────────────
-const MarineConditionsSection = () => (
-  <View style={styles.marineSection}>
+const MarineConditionsSection = ({ site, setWeatherModalVisible }) => (
+  <View style={styles.marineSection} >
     <Logo width={150} height={30} />
-    <Text style={styles.marineSectionTitle}>Current Marine Conditions:</Text>
+    <Text style={styles.marineSectionTitle}>Current Marine Conditions (from {site?.name || 'Dive Site'}):</Text>
     <View style={styles.conditionsGrid}>
       <MarineConditionCard icon="eye"         label="Visibility"     value="10m – 20m" highlighted />
       <MarineConditionCard icon="water"       label="Tide"           value="1.5m"      highlighted />
       <MarineConditionCard icon="thermometer" label="Temperature"    value="28°C"      />
       <MarineConditionCard icon="shield"      label="Diving Status"  value="Safe"      />
     </View>
+    <TouchableOpacity style={{ marginTop: 12, backgroundColor: '#EFF6FF', padding: 12, borderRadius: 12 }} onPress={() => setWeatherModalVisible(true)}>
+      <Text style={{ fontSize: 12, color: '#64748B', textAlign: 'center' }}>
+        Tap to view detailed report
+      </Text>
+    </TouchableOpacity>
   </View>
 );
 
-// ─── BookedAreaBanner ────────────────────────────────────────────────────────
-const BookedAreaBanner = ({ area }) => (
-  <TouchableOpacity style={styles.bookedBanner} activeOpacity={0.8}>
-    <View>
-      <Text style={styles.bookedLabel}>Booked area:</Text>
-      <Text style={styles.bookedArea}>{area}</Text>
-    </View>
-    <Ionicons name="arrow-forward" size={18} color="#1E40AF" />
-  </TouchableOpacity>
-);
-
-// ─── SiteCard ────────────────────────────────────────────────────────────────
-const SiteCard = ({ name, imageUri }) => (
-  <TouchableOpacity style={styles.siteCard} activeOpacity={0.85} onPress={handleCardPress}>
-    <ImageBackground
-      source={{ uri: imageUri }}
-      style={styles.siteImage}
-      imageStyle={styles.siteImageStyle}
-    >
-      <View style={styles.siteImageOverlay} />
-    </ImageBackground>
-    <View style={styles.siteNameContainer}>
-      <Text style={styles.siteName}>{name}</Text>
-    </View>
-  </TouchableOpacity>
-);
-
 // ─── SiteSection ─────────────────────────────────────────────────────────────
-const SiteSection = ({ title, sites }) => (
+const SiteSection = ({ title, description, sites, setModalVisible }) => (
   <View style={styles.siteSection}>
     <Text style={styles.siteSectionTitle}>{title}</Text>
+    <Text style={styles.siteSectionDescription}>{description}</Text>
     {sites.map((site) => (
-      <SiteCard key={site.name} name={site.name} imageUri={site.imageUri} />
+      <DiveSiteCard
+        key={site.id}
+        name={site.name}
+        demand={site.demand}
+        price={site.price}
+        location={site.location}
+        slots={site.slots}
+        divePeriod={site.divePeriod}
+        tags={site.tags}
+        imageUri={site.imageUri}
+        onViewDetails={() => setModalVisible(true)}
+        onOpenDetails={() => {
+          setSelectedSite(site);
+          setModalVisible(true);
+        }}
+      />
     ))}
   </View>
 );
@@ -92,36 +90,82 @@ const SiteSection = ({ title, sites }) => (
 // ─── MOCK DATA ───────────────────────────────────────────────────────────────
 const POPULAR_SITES = [
   {
+    id: '1',
+    name: 'Bulak Point',
+    demand: 'high',
+    price: 'P340',
+    location: 'Moalboal, Cebu',
+    slots: 5,
+    divePeriod: "Today's dive",
+    tags: ['open', 'high traffic'],
+    imageUri: 'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=300&q=80',
+  },
+  {
+    id: '2',
     name: 'Pescador Island',
-    imageUri: 'https://images.unsplash.com/photo-1559494007-9f5847c49d94?w=600&q=80',
+    demand: 'medium',
+    price: 'P580',
+    location: 'Moalboal, Cebu',
+    slots: 8,
+    divePeriod: "Tomorrow's dive",
+    tags: ['open', 'low traffic'],
+    imageUri: 'https://images.unsplash.com/photo-1559494007-9f5847c49d94?w=300&q=80',
   },
   {
-    name: 'Moalboal',
-    imageUri: 'https://images.unsplash.com/photo-1682687982360-3fbab65f9d50?w=600&q=80',
-  },
-  {
-    name: 'Olanggo Island',
+    id: '3',
+    name: 'Olango Island',
+    demand: 'low',
+    price: 'P420',
+    location: 'Lapu-Lapu, Cebu',
+    slots: 2,
+    divePeriod: "Today's dive",
+    tags: ['open', 'med traffic'],
     imageUri: 'https://i0.wp.com/theficklefeet.com/wp-content/uploads/2025/09/San-Vicente-Marine-Sanctuary-Olango-Island-1-Large.jpeg?w=1280&ssl=1',
   },
 ];
 
 const HIDDEN_SITES = [
   {
+    id: '4',
+    name: 'Bulak Point',
+    demand: 'high',
+    price: 'P340',
+    location: 'Moalboal, Cebu',
+    slots: 5,
+    divePeriod: "Today's dive",
+    tags: ['open', 'high traffic'],
+    imageUri: 'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=300&q=80',
+  },
+  {
+    id: '5',
     name: 'Pescador Island',
-    imageUri: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80',
+    demand: 'medium',
+    price: 'P580',
+    location: 'Moalboal, Cebu',
+    slots: 8,
+    divePeriod: "Tomorrow's dive",
+    tags: ['open', 'low traffic'],
+    imageUri: 'https://images.unsplash.com/photo-1559494007-9f5847c49d94?w=300&q=80',
   },
   {
-    name: 'Moalboal',
-    imageUri: 'https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=600&q=80',
-  },
-  {
-    name: 'Olanggo Island',
-    imageUri: 'https://i0.wp.com/theficklefeet.com/wp-content/uploads/2025/09/San-Vicente-Marine-Sanctuary-Olango-Island-1-Large.jpeg?w=1280&ssl=1',
+    id: '6',
+    name: 'Olango Island',
+    demand: 'low',
+    price: 'P420',
+    location: 'Lapu-Lapu, Cebu',
+    slots: 2,
+    divePeriod: "Today's dive",
+    tags: ['open', 'med traffic'],
+    imageUri: 'https://images.unsplash.com/photo-1682687982360-3fbab65f9d50?w=300&q=80',
   },
 ];
 
 // ─── HOME SCREEN ─────────────────────────────────────────────────────────────
 const HomeScreen = () => {
+
+  const [weatherModalVisible, setWeatherModalVisible] = useState(false);
+    const [selectedSite, setSelectedSite] = useState(null);
+    const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -134,17 +178,33 @@ const HomeScreen = () => {
       >
         {/* Marine Conditions Card */}
         <View style={styles.marineCard}>
-          <MarineConditionsSection />
-          <BookedAreaBanner area="Malapascua" />
+          <MarineConditionsSection site={{ name: "Malapascua" }} setWeatherModalVisible={setWeatherModalVisible} />
         </View>
 
-        {/* Popular Sites */}
-        <SiteSection title="Popular sites" sites={POPULAR_SITES} />
-
         {/* Hidden Sites */}
-        <SiteSection title="Explore hidden sites" sites={HIDDEN_SITES} />
+        <SiteSection title="Explore hidden sites" description="Help local communities by booking a dive at these hiddle gems." sites={HIDDEN_SITES} setModalVisible={setModalVisible} />
+
+        {/* Popular Sites */}
+        <SiteSection title="Popular sites" description="Explore the most visited marine sites in the area." sites={POPULAR_SITES} setModalVisible={setModalVisible} />
 
       </ScrollView>
+
+      <DiveSiteWeatherModal
+        visible={weatherModalVisible}
+        onClose={() => setWeatherModalVisible(false)}
+        onPrev={() => alert("next site pressed")}
+        onNext={() => alert("next site pressed")}
+        weatherData={WEATHER_MOCK} />
+
+      {/* Dive Site Modal (for detailed view) */}
+      <DiveSiteModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onDirections={() => {}}
+        onJoinTrip={(trip) => console.log('Joining', trip.name)}
+        data={DIVE_SITE_MODAL_MOCK}
+      />
+
     </SafeAreaView>
   );
 };
@@ -187,6 +247,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 16,
     paddingBottom: 20,
+    shadowColor: '#2563EB',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.10,
   },
   marineSectionTitle: {
     fontSize: 12,
@@ -264,11 +327,16 @@ const styles = StyleSheet.create({
   siteSection: {
     marginBottom: 20,
   },
+  siteSectionDescription: {
+    fontSize: 14,
+    color: '#64748B',
+    marginBottom: 12,
+  },
   siteSectionTitle: {
     fontSize: 20,
     fontWeight: '700',
     color: '#1E293B',
-    marginBottom: 12,
+    marginBottom: 4,
     letterSpacing: 0.2,
   },
 

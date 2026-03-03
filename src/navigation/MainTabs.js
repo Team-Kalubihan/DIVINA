@@ -7,6 +7,9 @@ import DivePlanScreen from '../screens/main/DivePlan';
 import IdentifierScreen from '../screens/main/Identifier';
 import ProfileScreen from '../screens/main/Profile';
 import OperatorScreen from '../screens/main/OperatorProfile';
+import StandardsScreen from '../screens/main/Standards';
+
+import ProfileStack from './ProfileStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -14,9 +17,10 @@ const TAB_ICONS = {
   'Home':       { active: 'home',          inactive: 'home-outline'          },
   'Dive Sites': { active: 'map',           inactive: 'map-outline'           },
   'Dive Plan':  { active: 'calendar',      inactive: 'calendar-outline'      },
-  'Identifier': { active: 'search',        inactive: 'search-outline'        },
+  'Identifier': { active: 'grid',        inactive: 'grid-outline'        },
   'Profile':    { active: 'person',        inactive: 'person-outline'        },
   'Operator':   { active: 'storefront',    inactive: 'storefront-outline'    },
+  'Standards':      { active: 'book',          inactive: 'book-outline'          },
 };
 
 export default function MainTabs() {
@@ -46,8 +50,8 @@ export default function MainTabs() {
       <Tab.Screen name="Dive Sites" component={DiveSitesScreen}/>
       <Tab.Screen name="Dive Plan"  component={DivePlanScreen} />
       <Tab.Screen name="Identifier" component={IdentifierScreen}/>
-      <Tab.Screen name="Profile"    component={ProfileScreen}  />
-      <Tab.Screen name="Operator"   component={OperatorScreen} />
+      <Tab.Screen name="Profile"    component={ProfileStack}  />
+      <Tab.Screen name="Standards"  component={StandardsScreen} />
     </Tab.Navigator>
   );
 }

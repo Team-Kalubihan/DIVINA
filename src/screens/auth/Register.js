@@ -15,7 +15,7 @@ export default function Register({ navigation }) {
 
   function handleRegisterAsOp() {
     // TODO: Handle register as op logic
-    navigation.navigate('RegisterAsOperatorScreen');
+    navigation.navigate('RegisterAsOperator');
   }
 
   function back() {
@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#F0F4FF'
   },
   card: {
     backgroundColor: '#fff',

@@ -18,7 +18,7 @@ export default function Register({ navigation }) {
 
   function handleNext() {
     // TODO: Handle next logic here
-    navigation.navigate('RegisterCredScreen');
+    navigation.navigate('RegisterCred');
   }
 
   function back() {
@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#F0F4FF'
   },
   card: {
     backgroundColor: '#fff',

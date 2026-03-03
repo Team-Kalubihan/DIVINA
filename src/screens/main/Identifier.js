@@ -8,29 +8,87 @@ import {
   StyleSheet,
   StatusBar,
   Dimensions,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 
 import Logo from '../../assets/DIVINA logo.svg';
 
 const { width } = Dimensions.get('window');
 
 // ─── Click Handlers ─────────────────────────────────────────────────────
-const handleCameraPress = () => {
-  alert('Camera button pressed');
-}
+const handleCameraPress = async ({ onImageSelected }) => {
+  try {
+    // Request camera permission
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert(
+        'Permission Required',
+        'Camera access is needed to take photos for species identification.',
+        [{ text: 'OK' }]
+      );
+      return;
+    }
 
-const handleUploadPress = () => {
-  alert('Upload button pressed');
-}
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      const photo = result.assets[0];
+      console.log('Photo taken:', photo.uri);
+      // TODO: pass photo.uri to your identifier logic
+      onImageSelected(photo.uri, 'camera');
+    }
+  } catch (error) {
+    Alert.alert('Error', 'Something went wrong opening the camera.');
+    console.error(error);
+  }
+};
+
+const handleUploadPress = async ({ onImageSelected }) => {
+  try {
+    // Request media library permission
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert(
+        'Permission Required',
+        'Gallery access is needed to upload photos for species identification.',
+        [{ text: 'OK' }]
+      );
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      const photo = result.assets[0];
+      console.log('Photo uploaded:', photo.uri);
+      // TODO: pass photo.uri to your identifier logic
+      onImageSelected(photo.uri, 'upload');
+    }
+  } catch (error) {
+    Alert.alert('Error', 'Something went wrong opening the gallery.');
+    console.error(error);
+  }
+};
 
 // ─── IdentifierCard ─────────────────────────────────────────────────────
-const IdentifierButtons = ({ icon, label, }) => (
+const IdentifierButtons = ({ icon, label, onImageSelected }) => (
   <TouchableOpacity 
     style={{...styles.identifierCard, alignContent: 'center', justifyContent: 'center'}} 
     activeOpacity={0.85}
-    onPress={() => (icon === 'camera' ? handleCameraPress() : handleUploadPress())}>
+    onPress={() => (icon === 'camera' ? handleCameraPress({onImageSelected}) : handleUploadPress({onImageSelected}))}>
     <View style={{...styles.identifierRow, justifyContent: 'center', alignItems: 'center'}}>
       <Ionicons name={icon} size={16} color={'#2563EB'} />
       <Text style={{ fontSize: 14, color: '#1E293B', fontWeight: '500' }}>
@@ -41,12 +99,12 @@ const IdentifierButtons = ({ icon, label, }) => (
 );
 
 // ─── UploadAndCameraSection ─────────────────────────────────────────────────
-const UploadAndCameraSection = () => (
+const UploadAndCameraSection = ({ onImageSelected }) => (
   <View style={styles.marineSection}>
     <Logo width={150} height={30} marginBottom={12}/>
     <View style={styles.conditionsGrid}>
-      <IdentifierButtons icon="cloud-upload" label="Upload"    value="28°C"      />
-      <IdentifierButtons icon="camera"      label="Take a picture"  value="Safe"      />
+      <IdentifierButtons icon="cloud-upload" label="Upload"          value="28°C"      onImageSelected={onImageSelected} />
+      <IdentifierButtons icon="camera"       label="Take a picture"  value="Safe"      onImageSelected={onImageSelected} />
     </View>
     <View style={styles.descriptionContainer}>
       <Text style={styles.descriptionText}>
@@ -96,6 +154,14 @@ const identified = [
 // ─── IDENTIFIER SCREEN ────────────────────────────────────────────────────────
 const IdentifierScreen = () => {
 
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageSource, setImageSource]     = useState(null);
+
+  const onImageSelected = (uri, source) => {
+    setSelectedImage(uri);
+    setImageSource(source);
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#F0F4FF" />
@@ -107,7 +173,7 @@ const IdentifierScreen = () => {
       >
         {/* Identifier card */}
         <View style={styles.marineCard}>
-          <UploadAndCameraSection />
+          <UploadAndCameraSection onImageSelected={onImageSelected} />
         </View>
 
         {/* Recent Identifications card */}

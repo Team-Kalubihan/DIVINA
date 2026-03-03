@@ -13,6 +13,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 
+import DiveSiteModal, { DIVE_SITE_MODAL_MOCK } from '../../components/DiveSiteModal';
+
 const { width, height } = Dimensions.get('window');
 
 // ─── MOCK DIVE SITE MARKERS ──────────────────────────────────────────────────
@@ -65,7 +67,7 @@ const DiveSiteMarker = ({ site, onPress }) => {
 };
 
 // ─── SiteCallout ─────────────────────────────────────────────────────────────
-const SiteCallout = ({ site, onClose }) => {
+const SiteCallout = ({ site, onClose, onViewDetails }) => {
   if (!site) return null;
 
   const typeColor =
@@ -87,7 +89,7 @@ const SiteCallout = ({ site, onClose }) => {
         </TouchableOpacity>
       </View>
       <Text style={styles.calloutName}>{site.name}</Text>
-      <TouchableOpacity style={[styles.calloutBtn, { backgroundColor: typeColor }]}>
+      <TouchableOpacity style={[styles.calloutBtn, { backgroundColor: typeColor }]} onPress={() => onViewDetails(site)}>
         <Text style={styles.calloutBtnText}>View Details</Text>
       </TouchableOpacity>
     </View>
@@ -121,6 +123,7 @@ const LocationFAB = ({ onPress }) => (
 const DiveSitesScreen = () => {
   const [searchQuery, setSearchQuery]   = useState('');
   const [selectedSite, setSelectedSite] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
   const mapRef = useRef(null);
 
   const INITIAL_REGION = {
@@ -132,6 +135,10 @@ const DiveSitesScreen = () => {
 
   const handleMarkerPress = (site) => setSelectedSite(site);
   const handleCloseCallout = () => setSelectedSite(null);
+  const handleViewDetails = (site) => {
+    setSelectedSite(null);
+    setModalVisible(true);
+  }
 
   const handleLocate = () => {
     mapRef.current?.animateToRegion(INITIAL_REGION, 800);
@@ -176,8 +183,17 @@ const DiveSitesScreen = () => {
 
         {/* Site Callout */}
         {selectedSite && (
-          <SiteCallout site={selectedSite} onClose={handleCloseCallout} />
+          <SiteCallout site={selectedSite} onClose={handleCloseCallout} onViewDetails={handleViewDetails}/>
         )}
+
+        {/* Dive Site Modal (for detailed view) */}
+        <DiveSiteModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          onDirections={() => {}}
+          onJoinTrip={(trip) => console.log('Joining', trip.name)}
+          data={DIVE_SITE_MODAL_MOCK}
+        />
       </View>
     </SafeAreaView>
   );

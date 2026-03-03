@@ -16,7 +16,7 @@ export default function Register({ navigation }) {
     //TODO: Handle next logic here
     navigation.reset({
       index: 0,
-      routes: [{ name: 'LoginScreen' }],
+      routes: [{ name: 'Login' }],
     });
   }
 
@@ -101,6 +101,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#F0F4FF'
   },
   card: {
     backgroundColor: '#fff',
