@@ -1,22 +1,35 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Alert, ActivityIndicator } from 'react-native';
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 
 import Logo from '../../assets/DIVINA logo.svg';
 import { useAuth } from '../../context/AuthContext';
+import { Auth } from '../../../API';
 
 export default function Login({ navigation }) {
 
-  const { login } = useAuth()
+  const { loginUser } = useAuth()
 
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const [showPassword, setShowPassword] = useState(true);
 
-  function handleLogin() {
-      // TODO: Handle login logic here
-      login();
+  async function handleLogin() {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please enter email and password.');
+      return;
+    }
+    setLoading(true);
+    try {
+      const data = await Auth.login({ email, password });
+      loginUser(data.user);
+    } catch (err) {
+      Alert.alert('Login Failed', err.message || 'Invalid credentials.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   function handleSignup() {
@@ -41,8 +54,8 @@ export default function Login({ navigation }) {
           <TextInput
             style={styles.input}
             placeholder="Enter your email"
-            value={username}
-            onChangeText={setUsername}
+            value={email}
+            onChangeText={setEmail}
           />
         </View>
 
@@ -71,8 +84,13 @@ export default function Login({ navigation }) {
         </View>
 
         <TouchableOpacity style={{...styles.button, marginTop: 26}} 
-          onPress={handleLogin}>
-          <Text style={{ ...styles.touchableLabel, color: '#fff' }}>Login</Text>
+          onPress={handleLogin}
+          disabled={loading}>
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={{ ...styles.touchableLabel, color: '#fff' }}>Login</Text>
+          )}
         </TouchableOpacity>
 
         <TouchableOpacity style={{ marginTop: 16 }} 

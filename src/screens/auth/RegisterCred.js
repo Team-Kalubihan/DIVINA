@@ -1,33 +1,64 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Alert, ActivityIndicator } from 'react-native';
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 
 import Logo from '../../assets/DIVINA logo.svg';
+import { useAuth } from '../../context/AuthContext';
+import { Auth } from '../../../API';
 
-export default function Register({ navigation }) {
-  const [username, setUsername] = useState('');
+export default function Register({ navigation, route }) {
+  const { firstName, lastName, isOperator, certDoc, birDoc } = route.params || {};
+  const { loginUser } = useAuth();
+
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const [showPassword1, setShowPassword1] = useState(true);
   const [showPassword2, setShowPassword2] = useState(true);
 
-  function handleNext() {
-    //TODO: Handle next logic here
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Login' }],
-    });
-  }
-
-  function handleBack() {
-    navigation.goBack();
+  async function handleNext() {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill in all fields.');
+      return;
+    }
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match.');
+      return;
+    }
+    setLoading(true);
+    try {
+      let data;
+      if (isOperator) {
+        data = await Auth.signUpOperator({
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          password,
+          birDocument: birDoc,
+          certificationDocument: certDoc,
+        });
+      } else {
+        data = await Auth.signUpRegular({
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          password,
+        });
+      }
+      loginUser(data.user);
+    } catch (err) {
+      Alert.alert('Registration Failed', err.message || 'Could not register.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={styles.card}>
-        <TouchableOpacity style={{ position: 'absolute', left: 20, top: 20 }} onPress={handleBack}>
+        <TouchableOpacity style={{ position: 'absolute', left: 20, top: 20 }} onPress={() => navigation.goBack()}>
           <Ionicons name={'arrow-back'} size={24} color="#636D7D" />
         </TouchableOpacity>
 
@@ -41,8 +72,8 @@ export default function Register({ navigation }) {
           <TextInput
             style={styles.input}
             placeholder="Enter your email"
-            value={username}
-            onChangeText={setUsername}
+            value={email}
+            onChangeText={setEmail}
           />
         </View>
 
@@ -87,8 +118,13 @@ export default function Register({ navigation }) {
         </View>
 
         <TouchableOpacity style={{...styles.button, marginTop: 46}} 
-          onPress={handleNext}>
-          <Text style={{ ...styles.touchableLabel, color: '#fff' }}>Next</Text>
+          onPress={handleNext}
+          disabled={loading}>
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={{ ...styles.touchableLabel, color: '#fff' }}>Sign Up</Text>
+          )}
         </TouchableOpacity>
           
       </View>

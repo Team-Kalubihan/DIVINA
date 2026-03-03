@@ -1,10 +1,10 @@
-const BASE_URL = 'http://10.21.189.30:5000';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { AsyncStorage } from '@react-native-async-storage/async-storage';
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 // ─── Token Storage ────────────────────────────────────────────────────────────
 
-const TokenStorage = {
+export const TokenStorage = {
   get: async (key) => await AsyncStorage.getItem(key),
   set: async (key, value) => await AsyncStorage.setItem(key, value),
   remove: async (key) => await AsyncStorage.removeItem(key),
@@ -12,13 +12,12 @@ const TokenStorage = {
   getAccessToken: () => TokenStorage.get("access_token"),
   getRefreshToken: () => TokenStorage.get("refresh_token"),
   setTokens: async (access, refresh) => {
-    await AsyncStorage.multiSet([
-      ["access_token", access],
-      ["refresh_token", refresh]
-    ]);
+    await AsyncStorage.setItem("access_token", access);
+    await AsyncStorage.setItem("refresh_token", refresh);
   },
   clearTokens: async () => {
-    await AsyncStorage.multiRemove(["access_token", "refresh_token"]);
+    await AsyncStorage.removeItem("access_token");
+    await AsyncStorage.removeItem("refresh_token");
   },
 };
 
@@ -222,4 +221,185 @@ export const Admin = {
   },
 };
 
-export default { Auth, Profile, Dashboard, Admin, TokenStorage };
+// ─── Stores ───────────────────────────────────────────────────────────────────
+
+export const Stores = {
+  list: async () => request("/api/stores"),
+
+  map: async () => request("/api/stores/map"),
+
+  get: async (storeId) => request(`/api/stores/${storeId}`),
+
+  create: async (data) =>
+    request("/api/stores", {
+      method: "POST",
+      headers: await authHeaders({ "Content-Type": "application/json" }),
+      body: JSON.stringify(data),
+    }),
+
+  update: async (storeId, data) =>
+    request(`/api/stores/${storeId}`, {
+      method: "PUT",
+      headers: await authHeaders({ "Content-Type": "application/json" }),
+      body: JSON.stringify(data),
+    }),
+
+  delete: async (storeId) =>
+    request(`/api/stores/${storeId}`, {
+      method: "DELETE",
+      headers: await authHeaders(),
+    }),
+};
+
+// ─── Schedules ────────────────────────────────────────────────────────────────
+
+export const Schedules = {
+  list: async (storeId, date) => {
+    const query = date ? `?date=${date}` : "";
+    return request(`/api/stores/${storeId}/schedules${query}`);
+  },
+
+  create: async (storeId, data) =>
+    request(`/api/stores/${storeId}/schedules`, {
+      method: "POST",
+      headers: await authHeaders({ "Content-Type": "application/json" }),
+      body: JSON.stringify(data),
+    }),
+
+  update: async (storeId, scheduleId, data) =>
+    request(`/api/stores/${storeId}/schedules/${scheduleId}`, {
+      method: "PUT",
+      headers: await authHeaders({ "Content-Type": "application/json" }),
+      body: JSON.stringify(data),
+    }),
+
+  delete: async (storeId, scheduleId) =>
+    request(`/api/stores/${storeId}/schedules/${scheduleId}`, {
+      method: "DELETE",
+      headers: await authHeaders(),
+    }),
+};
+
+// ─── Bookings ─────────────────────────────────────────────────────────────────
+
+export const Bookings = {
+  list: async (status) => {
+    const query = status ? `?status=${status}` : "";
+    return request(`/api/bookings${query}`, {
+      headers: await authHeaders(),
+    });
+  },
+
+  my: async () =>
+    request("/api/bookings/my", {
+      headers: await authHeaders(),
+    }),
+
+  get: async (bookingId) =>
+    request(`/api/bookings/${bookingId}`, {
+      headers: await authHeaders(),
+    }),
+
+  create: async ({ schedule_id, slots, notes, coupon_code }) =>
+    request("/api/bookings", {
+      method: "POST",
+      headers: await authHeaders({ "Content-Type": "application/json" }),
+      body: JSON.stringify({ schedule_id, slots, notes, coupon_code }),
+    }),
+
+  cancel: async (bookingId) =>
+    request(`/api/bookings/${bookingId}`, {
+      method: "DELETE",
+      headers: await authHeaders(),
+    }),
+};
+
+// ─── Weather ──────────────────────────────────────────────────────────────────
+
+export const Weather = {
+  current: async (q) =>
+    request(`/api/weather/current?q=${encodeURIComponent(q)}`),
+
+  marine: async (q, days = 1, tides = "yes") =>
+    request(
+      `/api/weather/marine?q=${encodeURIComponent(q)}&days=${days}&tides=${tides}`
+    ),
+};
+
+// ─── Species Identification ───────────────────────────────────────────────────
+
+export const Identify = {
+  identify: async (imageUri) => {
+    const form = new FormData();
+    const filename = imageUri.split("/").pop();
+    const ext = filename.split(".").pop().toLowerCase();
+    const mimeType =
+      ext === "png" ? "image/png" : ext === "webp" ? "image/webp" : "image/jpeg";
+
+    form.append("image", {
+      uri: imageUri,
+      name: filename,
+      type: mimeType,
+    });
+
+    return request("/api/identify", {
+      method: "POST",
+      body: form,
+    });
+  },
+};
+
+// ─── Dive Sites ───────────────────────────────────────────────────────────────
+
+export const DiveSites = {
+  list: async () => request("/api/dive-sites"),
+
+  get: async (id) => request(`/api/dive-sites/${id}`),
+};
+
+// ─── Dive Preferences ────────────────────────────────────────────────────────
+
+export const Preferences = {
+  get: async () =>
+    request("/api/profile/preferences", {
+      headers: await authHeaders(),
+    }),
+
+  update: async (data) =>
+    request("/api/profile/preferences", {
+      method: "PUT",
+      headers: await authHeaders({ "Content-Type": "application/json" }),
+      body: JSON.stringify(data),
+    }),
+};
+
+// ─── Recommendations ──────────────────────────────────────────────────────────
+
+export const Recommendations = {
+  sites: async (lat, lng) =>
+    request(`/api/recommend/sites?lat=${lat}&lng=${lng}`, {
+      headers: await authHeaders(),
+    }),
+
+  shops: async (lat, lng) =>
+    request(`/api/recommend/shops?lat=${lat}&lng=${lng}`, {
+      headers: await authHeaders(),
+    }),
+};
+
+// ─── Coupons ──────────────────────────────────────────────────────────────────
+
+export const Coupons = {
+  validate: async (code, schedule_id) =>
+    request("/api/coupons/validate", {
+      method: "POST",
+      headers: await authHeaders({ "Content-Type": "application/json" }),
+      body: JSON.stringify({ code, schedule_id }),
+    }),
+};
+
+export default {
+  Auth, Profile, Dashboard, Admin, TokenStorage,
+  Stores, Schedules, Bookings, Weather, Identify,
+  DiveSites, Preferences, Recommendations, Coupons,
+};

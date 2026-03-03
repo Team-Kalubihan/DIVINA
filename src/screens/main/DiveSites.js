@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 
 import DiveSiteModal, { DIVE_SITE_MODAL_MOCK } from '../../components/DiveSiteModal';
+import { DiveSites } from '../../../API';
 
 const { width, height } = Dimensions.get('window');
 
@@ -124,7 +125,29 @@ const DiveSitesScreen = () => {
   const [searchQuery, setSearchQuery]   = useState('');
   const [selectedSite, setSelectedSite] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalSiteData, setModalSiteData] = useState(null);
+  const [sites, setSites]               = useState(DIVE_SITES);
   const mapRef = useRef(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await DiveSites.list();
+        if (data.dive_sites && data.dive_sites.length > 0) {
+          const mapped = data.dive_sites.map((s) => ({
+            id: String(s.id),
+            name: s.name,
+            latitude: s.latitude,
+            longitude: s.longitude,
+            type: s.difficulty <= 2 ? 'community' : s.difficulty <= 3 ? 'popular' : 'hidden',
+          }));
+          setSites(mapped);
+        }
+      } catch {
+        // keep mock data as fallback
+      }
+    })();
+  }, []);
 
   const INITIAL_REGION = {
     latitude:      10.3157,
@@ -135,16 +158,45 @@ const DiveSitesScreen = () => {
 
   const handleMarkerPress = (site) => setSelectedSite(site);
   const handleCloseCallout = () => setSelectedSite(null);
-  const handleViewDetails = (site) => {
+  const handleViewDetails = async (site) => {
     setSelectedSite(null);
+    // Start with what we already have from the map marker
+    setModalSiteData({
+      name: site.name,
+      latitude: site.latitude,
+      longitude: site.longitude,
+      description: '',
+      images: [],
+      trips: [],
+    });
     setModalVisible(true);
-  }
+    try {
+      const data = await DiveSites.get(site.id);
+      const s = data.dive_site ?? data;
+      const descParts = [];
+      if (s.marine_life?.length)   descParts.push(`Marine life: ${s.marine_life.join(', ')}.`);
+      if (s.max_depth)             descParts.push(`Max depth: ${s.max_depth}m.`);
+      if (s.difficulty)            descParts.push(`Difficulty: ${s.difficulty}/5.`);
+      if (s.photography_score)     descParts.push(`Photography score: ${s.photography_score}/10.`);
+      if (s.crowd_level != null)   descParts.push(`Crowd level: ${Math.round(s.crowd_level * 100)}%.`);
+      setModalSiteData({
+        name: s.name ?? site.name,
+        latitude: s.latitude ?? site.latitude,
+        longitude: s.longitude ?? site.longitude,
+        description: descParts.join(' '),
+        images: s.images ?? [],
+        trips: s.trips ?? [],
+      });
+    } catch {
+      // modal already open with basic info — leave it
+    }
+  };
 
   const handleLocate = () => {
     mapRef.current?.animateToRegion(INITIAL_REGION, 800);
   };
 
-  const filteredSites = DIVE_SITES.filter((s) =>
+  const filteredSites = sites.filter((s) =>
     s.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -192,7 +244,7 @@ const DiveSitesScreen = () => {
           onClose={() => setModalVisible(false)}
           onDirections={() => {}}
           onJoinTrip={(trip) => console.log('Joining', trip.name)}
-          data={DIVE_SITE_MODAL_MOCK}
+          data={modalSiteData ?? DIVE_SITE_MODAL_MOCK}
         />
       </View>
     </SafeAreaView>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,11 +8,13 @@ import {
   StyleSheet,
   StatusBar,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 import Logo from '../../assets/DIVINA logo.svg';
+import { Bookings } from '../../../API';
 
 const { width } = Dimensions.get('window');
 
@@ -69,6 +71,30 @@ const POPULAR_SITES = [
 
 // ─── DIVE PLAN SCREEN ────────────────────────────────────────────────────────
 const DivePlanScreen = () => {
+  const [bookedSites, setBookedSites] = useState(POPULAR_SITES);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await Bookings.my();
+        if (data.bookings && data.bookings.length > 0) {
+          const mapped = data.bookings.map((b) => ({
+            name: b.schedule_title || b.store_name || `Booking #${b.id}`,
+            timeAndDate: b.date
+              ? `${b.start_time || ''} - ${b.end_time || ''}`
+              : `${b.slots} slot(s)`,
+            imageUri: 'https://images.unsplash.com/photo-1559494007-9f5847c49d94?w=600&q=80',
+          }));
+          setBookedSites(mapped);
+        }
+      } catch {
+        // keep mock data as fallback
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -82,7 +108,13 @@ const DivePlanScreen = () => {
 
         <Logo width={120} height={40} style={{ marginBottom: 0 }} />
 
-        <SiteSection title="Your booked sites" sites={POPULAR_SITES} />
+        {loading ? (
+          <View style={{ alignItems: 'center', marginTop: 40 }}>
+            <ActivityIndicator size="large" color="#2563EB" />
+          </View>
+        ) : (
+          <SiteSection title="Your booked sites" sites={bookedSites} />
+        )}
 
       </ScrollView>
     </SafeAreaView>

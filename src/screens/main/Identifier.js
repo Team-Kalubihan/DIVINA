@@ -9,12 +9,14 @@ import {
   StatusBar,
   Dimensions,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 
 import Logo from '../../assets/DIVINA logo.svg';
+import { Identify } from '../../../API';
 
 const { width } = Dimensions.get('window');
 
@@ -156,10 +158,31 @@ const IdentifierScreen = () => {
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageSource, setImageSource]     = useState(null);
+  const [identifying, setIdentifying]     = useState(false);
+  const [results, setResults]             = useState(identified);
 
-  const onImageSelected = (uri, source) => {
+  const onImageSelected = async (uri, source) => {
     setSelectedImage(uri);
     setImageSource(source);
+    setIdentifying(true);
+    try {
+      const data = await Identify.identify(uri);
+      if (data.species) {
+        const newEntry = {
+          name: data.species.common_name || data.classification.label,
+          scientificName: data.species.name,
+          imageUri: data.species.photo_url || uri,
+          confidence: data.classification.confidence,
+        };
+        setResults((prev) => [newEntry, ...prev]);
+      } else {
+        Alert.alert('Unknown Species', data.message || 'Could not confidently classify the image.');
+      }
+    } catch (err) {
+      Alert.alert('Identification Failed', err.message || 'Something went wrong.');
+    } finally {
+      setIdentifying(false);
+    }
   };
 
   return (
@@ -176,8 +199,16 @@ const IdentifierScreen = () => {
           <UploadAndCameraSection onImageSelected={onImageSelected} />
         </View>
 
+        {/* Loading indicator */}
+        {identifying && (
+          <View style={{ alignItems: 'center', marginBottom: 16 }}>
+            <ActivityIndicator size="large" color="#2563EB" />
+            <Text style={{ color: '#64748B', marginTop: 8, fontSize: 13 }}>Identifying species...</Text>
+          </View>
+        )}
+
         {/* Recent Identifications card */}
-        <IdentifiedSection title="Recent Identifications" identified={identified} />
+        <IdentifiedSection title="Recent Identifications" identified={results} />
 
       </ScrollView>
     </SafeAreaView>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
+import { Stores } from '../../../API';
 
 const { width } = Dimensions.get('window');
 
@@ -172,8 +173,36 @@ const RedeemSection = ({ items }) => (
 
 // ─── PROFILE SCREEN ──────────────────────────────────────────────────────────
 const ProfileScreen = () => {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigation = useNavigation();
+  const [shops, setShops] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await Stores.list();
+        setShops((data.stores || []).slice(0, 3).map((s) => ({
+          id: String(s.id),
+          name: s.name,
+          rating: 4.5,
+          distance: s.address || 'Nearby',
+          isOpen: s.is_active,
+          traffic: 'low traffic',
+          imageUri: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=300&q=80',
+        })));
+      } catch {
+        // keep empty
+      }
+    })();
+  }, []);
+
+  const profileUser = {
+    name: user ? `${user.first_name} ${user.last_name}` : 'User',
+    role: user?.role === 'dive_operator' ? 'Operator' : (user?.role || 'Diver'),
+    points: 0,
+    avatarUri: `https://api.dicebear.com/7.x/adventurer/png?seed=${user?.first_name || 'User'}`,
+    bannerUri: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80',
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -184,8 +213,8 @@ const ProfileScreen = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <ProfileHeader user={USER} onStorePress={() => navigation.navigate('Operator')} onLogout={logout} />
-        <ShopNearYouSection shops={NEARBY_SHOPS} />
+        <ProfileHeader user={profileUser} onStorePress={() => navigation.navigate('Operator')} onLogout={logout} />
+        <ShopNearYouSection shops={shops.length > 0 ? shops : NEARBY_SHOPS} />
         <RedeemSection items={REDEEM_ITEMS} />
         <View style={{ height: 20 }} />
       </ScrollView>

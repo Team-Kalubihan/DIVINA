@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -17,6 +17,7 @@ import Logo from '../../assets/DIVINA logo.svg';
 import DiveSiteCard from '../../components/DiveSiteCard';
 import DiveSiteWeatherModal, { WEATHER_MOCK } from '../../components/DiveSiteWeatherModal';
 import DiveSiteModal, { DIVE_SITE_MODAL_MOCK } from '../../components/DiveSiteModal';
+import { Weather } from '../../../API';
 
 const { width } = Dimensions.get('window');
 
@@ -43,15 +44,15 @@ const MarineConditionCard = ({ icon, label, value, highlighted }) => (
 );
 
 // ─── MarineConditionsSection ─────────────────────────────────────────────────
-const MarineConditionsSection = ({ site, setWeatherModalVisible }) => (
+const MarineConditionsSection = ({ site, marine, setWeatherModalVisible }) => (
   <View style={styles.marineSection} >
     <Logo width={150} height={30} />
     <Text style={styles.marineSectionTitle}>Current Marine Conditions (from {site?.name || 'Dive Site'}):</Text>
     <View style={styles.conditionsGrid}>
-      <MarineConditionCard icon="eye"         label="Visibility"     value="10m – 20m" highlighted />
-      <MarineConditionCard icon="water"       label="Tide"           value="1.5m"      highlighted />
-      <MarineConditionCard icon="thermometer" label="Temperature"    value="28°C"      />
-      <MarineConditionCard icon="shield"      label="Diving Status"  value="Safe"      />
+      <MarineConditionCard icon="eye"         label="Visibility"     value={marine.visibility}    highlighted />
+      <MarineConditionCard icon="water"       label="Wave Height"    value={marine.waveHeight}    highlighted />
+      <MarineConditionCard icon="thermometer" label="Water Temp"     value={marine.waterTemp}     />
+      <MarineConditionCard icon="shield"      label="Diving Status"  value={marine.divingStatus}  />
     </View>
     <TouchableOpacity style={{ marginTop: 12, backgroundColor: '#EFF6FF', padding: 12, borderRadius: 12 }} onPress={() => setWeatherModalVisible(true)}>
       <Text style={{ fontSize: 12, color: '#64748B', textAlign: 'center' }}>
@@ -167,6 +168,36 @@ const HomeScreen = () => {
     const [selectedSite, setSelectedSite] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
 
+  const [marine, setMarine] = useState({
+    visibility: '—',
+    waveHeight: '—',
+    waterTemp: '—',
+    divingStatus: '—',
+  });
+  const [weatherData, setWeatherData] = useState(WEATHER_MOCK);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await Weather.marine('Cebu', 1, 'yes');
+        const hour = data.forecast?.forecastday?.[0]?.hour?.[0];
+        const tides = data.forecast?.forecastday?.[0]?.day?.tides?.[0]?.tide;
+        if (hour) {
+          const waveHt = hour.sig_ht_mt;
+          setMarine({
+            visibility: `${hour.vis_km || 10}km`,
+            waveHeight: `${waveHt}m`,
+            waterTemp: `${hour.water_temp_c}°C`,
+            divingStatus: waveHt <= 1.0 ? 'Safe' : waveHt <= 2.0 ? 'Caution' : 'Unsafe',
+          });
+        }
+        setWeatherData(data);
+      } catch {
+        // keep defaults
+      }
+    })();
+  }, []);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#F0F4FF" />
@@ -178,7 +209,7 @@ const HomeScreen = () => {
       >
         {/* Marine Conditions Card */}
         <View style={styles.marineCard}>
-          <MarineConditionsSection site={{ name: "Malapascua" }} setWeatherModalVisible={setWeatherModalVisible} />
+          <MarineConditionsSection site={{ name: "Malapascua" }} marine={marine} setWeatherModalVisible={setWeatherModalVisible} />
         </View>
 
         {/* Hidden Sites */}
@@ -194,7 +225,7 @@ const HomeScreen = () => {
         onClose={() => setWeatherModalVisible(false)}
         onPrev={() => alert("next site pressed")}
         onNext={() => alert("next site pressed")}
-        weatherData={WEATHER_MOCK} />
+        weatherData={weatherData} />
 
       {/* Dive Site Modal (for detailed view) */}
       <DiveSiteModal

@@ -1,24 +1,39 @@
-import { View, Text, TouchableOpacity, StyleSheet, KeyboardAvoidingView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Alert } from 'react-native';
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
+import * as DocumentPicker from 'expo-document-picker';
 
 import Logo from '../../assets/DIVINA logo.svg';
 
-export default function Register({ navigation }) {
-  const [certificate, setCertificate] = useState('');
-  const [bir, setBir] = useState('');
+export default function Register({ navigation, route }) {
+  const { firstName, lastName } = route.params || {};
+  const [certDoc, setCertDoc] = useState(null);
+  const [birDoc, setBirDoc] = useState(null);
 
-  function handleUploadCert() {
-    // TODO: Handle login logic here
+  async function handleUploadCert() {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({ type: 'application/pdf' });
+      if (!result.canceled) setCertDoc(result.assets[0]);
+    } catch {
+      Alert.alert('Error', 'Could not pick document.');
+    }
   }
 
-  function handleUploadBIR() {
-    // TODO: Handle signup logic here
+  async function handleUploadBIR() {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({ type: 'application/pdf' });
+      if (!result.canceled) setBirDoc(result.assets[0]);
+    } catch {
+      Alert.alert('Error', 'Could not pick document.');
+    }
   }
 
   function handleNext() {
-    // TODO: Handle next logic here
-    navigation.navigate('RegisterCred');
+    if (!certDoc || !birDoc) {
+      Alert.alert('Error', 'Please upload both documents.');
+      return;
+    }
+    navigation.navigate('RegisterCred', { firstName, lastName, isOperator: true, certDoc, birDoc });
   }
 
   function back() {
@@ -40,16 +55,20 @@ export default function Register({ navigation }) {
         <View style={{ marginTop: 20 }}>
           <Text style={styles.label}>Certificate</Text>
           <TouchableOpacity style={{...styles.uploadButton, flexDirection: 'row'}} onPress={handleUploadCert}>
-            <Text style={{ ...styles.touchableLabel, color: '#636D7D', fontSize: 16 }}>Upload</Text>
-            <Ionicons name={'cloud-upload'} size={20} color="#636D7D" style={{ marginLeft: 8 }} />
+            <Text style={{ ...styles.touchableLabel, color: '#636D7D', fontSize: 16 }}>
+              {certDoc ? certDoc.name : 'Upload'}
+            </Text>
+            <Ionicons name={certDoc ? 'checkmark-circle' : 'cloud-upload'} size={20} color={certDoc ? '#10B981' : '#636D7D'} style={{ marginLeft: 8 }} />
           </TouchableOpacity>
         </View>
 
         <View style={{ marginTop: 16, }}>
           <Text style={styles.label}>BIR</Text>
           <TouchableOpacity style={{...styles.uploadButton, flexDirection: 'row'}} onPress={handleUploadBIR}>
-            <Text style={{ ...styles.touchableLabel, color: '#636D7D', fontSize: 16 }}>Upload</Text>
-            <Ionicons name={'cloud-upload'} size={20} color="#636D7D" style={{ marginLeft: 8 }} />
+            <Text style={{ ...styles.touchableLabel, color: '#636D7D', fontSize: 16 }}>
+              {birDoc ? birDoc.name : 'Upload'}
+            </Text>
+            <Ionicons name={birDoc ? 'checkmark-circle' : 'cloud-upload'} size={20} color={birDoc ? '#10B981' : '#636D7D'} style={{ marginLeft: 8 }} />
           </TouchableOpacity>
         </View>
 
