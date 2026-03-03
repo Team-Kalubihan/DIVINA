@@ -11,6 +11,9 @@ import {
   Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from '../../context/AuthContext';
 
 const { width } = Dimensions.get('window');
 
@@ -43,8 +46,13 @@ const REDEEM_ITEMS = [
   { id: '5', category: 'Some restaurant discount voucher', title: '25% off',        points: 280 },
 ];
 
+// ─── Button Functions ────────────────────────────────────────────────────────
+const handleLogout = () => {
+  alert('Logout button pressed! This will navigate to the login screen.');
+};
+
 // ─── ProfileHeader ───────────────────────────────────────────────────────────
-const ProfileHeader = ({ user }) => (
+const ProfileHeader = ({ user, onStorePress, onLogout }) => (
   <View style={styles.profileHeaderContainer}>
     {/* Banner */}
     <ImageBackground
@@ -53,6 +61,17 @@ const ProfileHeader = ({ user }) => (
       imageStyle={styles.bannerImage}
     >
       <View style={styles.bannerOverlay} />
+
+      {/* Store Button — only for operators */}
+      {/* {user.role === 'Operator' && ( */}
+        <TouchableOpacity
+          style={styles.storeButton}
+          onPress={onStorePress}
+          activeOpacity={0.85}
+        >
+          <Ionicons name="storefront" size={20} color="#2563EB" />
+        </TouchableOpacity>
+      {/*/ )}*/}
     </ImageBackground>
 
     {/* Avatar */}
@@ -71,6 +90,12 @@ const ProfileHeader = ({ user }) => (
       <Text style={styles.pointsLabel}>Earned Points:</Text>
       <Text style={styles.pointsValue}>{user.points.toFixed(2)}</Text>
     </View>
+
+    {/* Logout Button */}
+    <TouchableOpacity style={{...styles.button, marginTop: 26}} 
+      onPress={onLogout}>
+      <Text style={{ ...styles.touchableLabel, color: '#fff' }}>Logout</Text>
+    </TouchableOpacity>
   </View>
 );
 
@@ -147,7 +172,8 @@ const RedeemSection = ({ items }) => (
 
 // ─── PROFILE SCREEN ──────────────────────────────────────────────────────────
 const ProfileScreen = () => {
-  const [activeTab, setActiveTab] = useState('user');
+  const { logout } = useAuth();
+  const navigation = useNavigation();
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -158,7 +184,7 @@ const ProfileScreen = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <ProfileHeader user={USER} />
+        <ProfileHeader user={USER} onStorePress={() => navigation.navigate('Operator')} onLogout={logout} />
         <ShopNearYouSection shops={NEARBY_SHOPS} />
         <RedeemSection items={REDEEM_ITEMS} />
         <View style={{ height: 20 }} />
@@ -198,6 +224,22 @@ const styles = StyleSheet.create({
   bannerOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(59,130,246,0.45)',
+  },
+  storeButton: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    backgroundColor: '#fff',
+    borderRadius: 22,
+    width: 42,
+    height: 42,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 4,
   },
   avatarWrapper: {
     marginTop: -48,
@@ -252,6 +294,21 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '800',
     color: '#1E293B',
+  },
+  touchableLabel: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 15, 
+    fontWeight: 'bold', 
+    textAlign: 'center'
+  },
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#007BFF',
+    paddingVertical: 12,
+    width: 200,
+    height: 44,
+    borderRadius: 26,
   },
 
   // ── Sections

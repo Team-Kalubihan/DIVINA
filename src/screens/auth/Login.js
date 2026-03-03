@@ -20,7 +20,7 @@ export default function Login({ navigation }) {
   }
 
   function handleSignup() {
-      navigation.navigate('RegisterScreen');
+      navigation.navigate('Register');
   }
 
   function handleForgotPassword() {
@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#F0F4FF'
   },
   card: {
     backgroundColor: '#fff',
