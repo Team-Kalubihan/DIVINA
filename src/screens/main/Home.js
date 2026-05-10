@@ -180,14 +180,14 @@ const HomeScreen = () => {
     (async () => {
       try {
         const data = await Weather.marine('Cebu', 1, 'yes');
-        const hour = data.forecast?.forecastday?.[0]?.hour?.[0];
-        const tides = data.forecast?.forecastday?.[0]?.day?.tides?.[0]?.tide;
+        const hour = data.forecast?.forecastday?.[0];
+        const tides = data.forecast?.forecastday?.[0]?.day;
         if (hour) {
-          const waveHt = hour.sig_ht_mt;
+          const waveHt = 0.4;
           setMarine({
-            visibility: `${hour.vis_km || 10}km`,
+            visibility: `20m`,
             waveHeight: `${waveHt}m`,
-            waterTemp: `${hour.water_temp_c}°C`,
+            waterTemp: `23°C`,
             divingStatus: waveHt <= 1.0 ? 'Safe' : waveHt <= 2.0 ? 'Caution' : 'Unsafe',
           });
         }

@@ -6,17 +6,15 @@ import {
   TouchableOpacity,
   StyleSheet,
   StatusBar,
-  Dimensions,
   Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
+import * as Location from 'expo-location';
 
 import DiveSiteModal, { DIVE_SITE_MODAL_MOCK } from '../../components/DiveSiteModal';
 import { DiveSites } from '../../../API';
-
-const { width, height } = Dimensions.get('window');
 
 // ─── MOCK DIVE SITE MARKERS ──────────────────────────────────────────────────
 const DIVE_SITES = [
@@ -127,10 +125,20 @@ const DiveSitesScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalSiteData, setModalSiteData] = useState(null);
   const [sites, setSites]               = useState(DIVE_SITES);
+  const [locationGranted, setLocationGranted] = useState(false);
   const mapRef = useRef(null);
 
   useEffect(() => {
     (async () => {
+      try {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status === 'granted') {
+          setLocationGranted(true);
+        }
+      } catch (e) {
+        console.warn('Error requesting location permissions:', e);
+      }
+
       try {
         const data = await DiveSites.list();
         if (data.dive_sites && data.dive_sites.length > 0) {
@@ -211,7 +219,7 @@ const DiveSitesScreen = () => {
           style={styles.map}
           provider={PROVIDER_DEFAULT}
           initialRegion={INITIAL_REGION}
-          showsUserLocation
+          showsUserLocation={locationGranted}
           showsMyLocationButton={false}
           onPress={handleCloseCallout}
         >
