@@ -49,10 +49,10 @@ const MarineConditionsSection = ({ site, marine, setWeatherModalVisible }) => (
     <Logo width={150} height={30} />
     <Text style={styles.marineSectionTitle}>Current Marine Conditions (from {site?.name || 'Dive Site'}):</Text>
     <View style={styles.conditionsGrid}>
-      <MarineConditionCard icon="eye"         label="Visibility"     value={marine.visibility}    highlighted />
-      <MarineConditionCard icon="water"       label="Wave Height"    value={marine.waveHeight}    highlighted />
-      <MarineConditionCard icon="thermometer" label="Water Temp"     value={marine.waterTemp}     />
-      <MarineConditionCard icon="shield"      label="Diving Status"  value={marine.divingStatus}  />
+      <MarineConditionCard icon="eye" label="Visibility" value={marine.visibility} highlighted />
+      <MarineConditionCard icon="water" label="Wave Height" value={marine.waveHeight} highlighted />
+      <MarineConditionCard icon="thermometer" label="Water Temp" value={marine.waterTemp} />
+      <MarineConditionCard icon="shield" label="Diving Status" value={marine.divingStatus} />
     </View>
     <TouchableOpacity style={{ marginTop: 12, backgroundColor: '#EFF6FF', padding: 12, borderRadius: 12 }} onPress={() => setWeatherModalVisible(true)}>
       <Text style={{ fontSize: 12, color: '#64748B', textAlign: 'center' }}>
@@ -99,7 +99,7 @@ const POPULAR_SITES = [
     slots: 5,
     divePeriod: "Today's dive",
     tags: ['open', 'high traffic'],
-    imageUri: 'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=300&q=80',
+    imageUri: 'https://images.unsplash.com/photo-1602199926649-2e5e447bab97?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb&dl=kiril-dobrev-8cQpL8kGqso-unsplash.jpg',
   },
   {
     id: '2',
@@ -135,7 +135,7 @@ const HIDDEN_SITES = [
     slots: 5,
     divePeriod: "Today's dive",
     tags: ['open', 'high traffic'],
-    imageUri: 'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=300&q=80',
+    imageUri: 'https://images.unsplash.com/photo-1602199926649-2e5e447bab97?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb&dl=kiril-dobrev-8cQpL8kGqso-unsplash.jpg',
   },
   {
     id: '5',
@@ -165,8 +165,8 @@ const HIDDEN_SITES = [
 const HomeScreen = () => {
 
   const [weatherModalVisible, setWeatherModalVisible] = useState(false);
-    const [selectedSite, setSelectedSite] = useState(null);
-    const [modalVisible, setModalVisible] = useState(false);
+  const [selectedSite, setSelectedSite] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const [marine, setMarine] = useState({
     visibility: '—',
@@ -231,7 +231,7 @@ const HomeScreen = () => {
       <DiveSiteModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        onDirections={() => {}}
+        onDirections={() => { }}
         onJoinTrip={(trip) => console.log('Joining', trip.name)}
         data={DIVE_SITE_MODAL_MOCK}
       />
@@ -242,9 +242,9 @@ const HomeScreen = () => {
 
 // ─── STYLES ──────────────────────────────────────────────────────────────────
 const BLUE_PRIMARY = '#2563EB';
-const BLUE_CARD    = '#3B82F6';
-const BLUE_LIGHT   = '#EFF6FF';
-const BG           = '#F0F4FF';
+const BLUE_CARD = '#3B82F6';
+const BLUE_LIGHT = '#EFF6FF';
+const BG = '#F0F4FF';
 
 const styles = StyleSheet.create({
   safeArea: {

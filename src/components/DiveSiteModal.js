@@ -29,7 +29,7 @@ export const DIVE_SITE_MODAL_MOCK = {
   images: [
     'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&q=80',
     'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&q=80',
-    'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=400&q=80',
+    'https://images.unsplash.com/photo-1602199926649-2e5e447bab97?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb&dl=kiril-dobrev-8cQpL8kGqso-unsplash.jpg',
     'https://images.unsplash.com/photo-1682687982360-3fbab65f9d50?w=400&q=80',
   ],
   trips: [
@@ -106,7 +106,7 @@ const ReviewsHeader = ({ rating, count }) => (
     <Text style={{ fontSize: 20, fontWeight: '600', color: '#1E293B' }}>
       {rating} ({count} reviews)
     </Text>
-   </View>
+  </View>
 );
 
 // ─── Reviews Card ───────────────────────────────────────────────────────────
@@ -133,7 +133,7 @@ const ReviewsSection = ({ reviews }) => (
     {reviews.map((rev, idx) => (
       <ReviewCard key={idx} reviewer={rev.reviewer} rating={rev.rating} comment={rev.comment} />
     ))}
-   </View>
+  </View>
 );
 
 // ─── DiveSiteModal ────────────────────────────────────────────────────────────
@@ -146,14 +146,14 @@ const ReviewsSection = ({ reviews }) => (
  *  - onJoinTrip  {function}
  */
 const DiveSiteModal = ({
-  visible      = false,
-  onClose      = () => {},
-  onDirections = () => {},
-  onJoinTrip   = () => {},
-  data         = DIVE_SITE_MODAL_MOCK,
+  visible = false,
+  onClose = () => { },
+  onDirections = () => { },
+  onJoinTrip = () => { },
+  data = DIVE_SITE_MODAL_MOCK,
 }) => {
 
-  const [modalVisible, setModalVisible] = useState(false);  
+  const [modalVisible, setModalVisible] = useState(false);
 
   // ── Directions handler ──────────────────────────────────────────────────
   const handleDirections = async () => {
@@ -170,7 +170,7 @@ const DiveSiteModal = ({
     const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}&destination_place_name=${label}&travelmode=driving`;
 
     // iOS: try native Apple Maps first, fall back to Google Maps
-    const appleMapsUrl  = `maps://?daddr=${latitude},${longitude}&q=${label}`;
+    const appleMapsUrl = `maps://?daddr=${latitude},${longitude}&q=${label}`;
 
     try {
       if (Platform.OS === 'ios') {
@@ -227,7 +227,7 @@ const DiveSiteModal = ({
           </View>
 
           {/* View trips */}
-          <TouchableOpacity style={styles.viewTripsButton} onPress={() => {setModalVisible(true)}} activeOpacity={0.85}>
+          <TouchableOpacity style={styles.viewTripsButton} onPress={() => { setModalVisible(true) }} activeOpacity={0.85}>
             <Text style={styles.viewTripsText}>View All Trips</Text>
           </TouchableOpacity>
 

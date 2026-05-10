@@ -14,7 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
-import BookingDialog, {BOOKING_DIALOG_MOCK} from './BookingConfirmationDialog';
+import BookingDialog, { BOOKING_DIALOG_MOCK } from './BookingConfirmationDialog';
 
 const { width } = Dimensions.get('window');
 
@@ -26,7 +26,7 @@ export const DIVE_SITE_MODAL_MOCK = {
   images: [
     'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&q=80',
     'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&q=80',
-    'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=400&q=80',
+    'https://images.unsplash.com/photo-1602199926649-2e5e447bab97?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb&dl=kiril-dobrev-8cQpL8kGqso-unsplash.jpg',
     'https://images.unsplash.com/photo-1682687982360-3fbab65f9d50?w=400&q=80',
   ],
   trips: [
@@ -139,11 +139,11 @@ const TripCard = ({ trip, setDialogVisible }) => {
  *  - onJoinTrip  {function}
  */
 const TripsModal = ({
-  visible      = false,
-  onClose      = () => {},
-  onDirections = () => {},
-  onJoinTrip   = () => {},
-  data         = DIVE_SITE_MODAL_MOCK,
+  visible = false,
+  onClose = () => { },
+  onDirections = () => { },
+  onJoinTrip = () => { },
+  data = DIVE_SITE_MODAL_MOCK,
 }) => {
 
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -199,7 +199,7 @@ const TripsModal = ({
     >
       <SafeAreaView style={styles.safeArea}>
         <Animated.View style={[{ flex: 1 }, { transform: [{ translateY }] }]}>
-        
+
           {/* Drag handle — attach panResponder here only */}
           <View style={styles.dragHandleArea} {...panResponder.panHandlers}>
             <View style={styles.dragHandle} />
@@ -209,7 +209,7 @@ const TripsModal = ({
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.scrollContent}
             // Prevent scroll from conflicting with drag
-              scrollEventThrottle={16}
+            scrollEventThrottle={16}
           >
             {/* Header */}
             <View style={styles.header}>

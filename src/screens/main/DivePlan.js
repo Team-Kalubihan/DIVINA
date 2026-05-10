@@ -65,7 +65,7 @@ const POPULAR_SITES = [
   {
     name: 'Olanggo Island',
     timeAndDate: '01:00 PM - 03:00 PM',
-    imageUri: 'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=600&q=80',
+    imageUri: 'https://images.unsplash.com/photo-1602199926649-2e5e447bab97?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb&dl=kiril-dobrev-8cQpL8kGqso-unsplash.jpg',
   },
 ];
 
@@ -122,8 +122,8 @@ const DivePlanScreen = () => {
 };
 
 // ─── STYLES ──────────────────────────────────────────────────────────────────
-const BLUE_LIGHT   = '#EFF6FF';
-const BG           = '#F0F4FF';
+const BLUE_LIGHT = '#EFF6FF';
+const BG = '#F0F4FF';
 
 const styles = StyleSheet.create({
   safeArea: {

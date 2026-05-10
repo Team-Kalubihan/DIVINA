@@ -11,9 +11,9 @@ import { Ionicons } from '@expo/vector-icons';
 // ─── DemandBadge ─────────────────────────────────────────────────────────────
 const DemandBadge = ({ level }) => {
   const config = {
-    high:   { label: 'High demand', bg: '#FEF9C3', text: '#854D0E' },
-    medium: { label: 'Med demand',  bg: '#DBEAFE', text: '#1E40AF' },
-    low:    { label: 'Low demand',  bg: '#DCFCE7', text: '#166534' },
+    high: { label: 'High demand', bg: '#FEF9C3', text: '#854D0E' },
+    medium: { label: 'Med demand', bg: '#DBEAFE', text: '#1E40AF' },
+    low: { label: 'Low demand', bg: '#DCFCE7', text: '#166534' },
   };
   const { label, bg, text } = config[level] || config.high;
   return (
@@ -26,11 +26,11 @@ const DemandBadge = ({ level }) => {
 // ─── StatusTag ────────────────────────────────────────────────────────────────
 const StatusTag = ({ type }) => {
   const config = {
-    open:         { label: '✓ open',       bg: '#DCFCE7', text: '#166534' },
-    closed:       { label: '✕ closed',     bg: '#FEE2E2', text: '#991B1B' },
+    open: { label: '✓ open', bg: '#DCFCE7', text: '#166534' },
+    closed: { label: '✕ closed', bg: '#FEE2E2', text: '#991B1B' },
     'high traffic': { label: 'high traffic', bg: '#FEE2E2', text: '#991B1B' },
-    'low traffic':  { label: 'low traffic',  bg: '#DCFCE7', text: '#166534' },
-    'med traffic':  { label: 'med traffic',  bg: '#FEF9C3', text: '#854D0E' },
+    'low traffic': { label: 'low traffic', bg: '#DCFCE7', text: '#166534' },
+    'med traffic': { label: 'med traffic', bg: '#FEF9C3', text: '#854D0E' },
   };
   const { label, bg, text } = config[type] || { label: type, bg: '#F1F5F9', text: '#475569' };
   return (
@@ -54,15 +54,15 @@ const StatusTag = ({ type }) => {
  *  - onViewDetails {function}
  */
 const DiveSiteCard = ({
-  name        = 'Bulak Point',
-  demand      = 'high',
-  price       = 'P340',
-  location    = 'Moalboal, Cebu',
-  slots       = 5,
-  divePeriod  = "Today's dive",
-  tags        = ['open', 'high traffic'],
-  imageUri    = 'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=300&q=80',
-  onViewDetails = () => {},
+  name = 'Bulak Point',
+  demand = 'high',
+  price = 'P340',
+  location = 'Moalboal, Cebu',
+  slots = 5,
+  divePeriod = "Today's dive",
+  tags = ['open', 'high traffic'],
+  imageUri = 'https://images.unsplash.com/photo-1602199926649-2e5e447bab97?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb&dl=kiril-dobrev-8cQpL8kGqso-unsplash.jpg',
+  onViewDetails = () => { },
 }) => (
   <View style={styles.card}>
     {/* Thumbnail */}
@@ -73,7 +73,7 @@ const DiveSiteCard = ({
       {/* Row 1 – Name + Demand + Price */}
       <View style={styles.topRow}>
         <Text style={styles.name}>{name}</Text>
-        
+
         <View style={styles.priceBlock}>
           <Text style={styles.priceFrom}>from </Text>
           <Text style={styles.priceValue}>{price}</Text>
